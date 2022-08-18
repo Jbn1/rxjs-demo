@@ -1,0 +1,157 @@
+<mat-tab-group>
+    <mat-tab label="Basique">
+        <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+
+            <mat-grid-list cols="2" rowHeight="100px" style="width: 600px;">
+                <mat-grid-tile>
+                    <mat-form-field>
+                        <mat-label>Caption</mat-label>
+                        <input formControlName="caption" matInput placeholder="Placeholder">
+                    </mat-form-field>
+                </mat-grid-tile>
+
+                <mat-grid-tile>
+                    <mat-form-field>
+                        <mat-label>PayRate</mat-label>
+                        <input formControlName="payRate" type="number" matInput placeholder="Placeholder">
+                    </mat-form-field>
+                </mat-grid-tile>
+
+                <mat-grid-tile>
+                    <mat-form-field appearance="fill">
+                        <mat-label>Recours</mat-label>
+                        <mat-select formControlName="recours">
+                            <mat-option [value]="'Remplacement'">Remplacement</mat-option>
+                            <mat-option [value]="'Accroissement'">Accroissement</mat-option>
+                            <mat-option [value]="'Maladie'">Maladie</mat-option>
+                            <mat-option [value]="'Aucun'">Aucun</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-grid-tile>
+
+                <mat-grid-tile>
+                    <mat-form-field appearance="fill">
+                        <mat-label>Conventions</mat-label>
+                        <mat-select formControlName="conv">
+                            <mat-option *ngFor="let convention of conventions" [value]="convention">{{convention.caption}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-grid-tile>
+
+            </mat-grid-list>
+            <br>
+            <mat-grid-list cols="2" rowHeight="50px" style="width: 300px">
+                <mat-grid-tile>
+                    <button mat-raised-button color="primary" type="submit">Submit</button>
+                </mat-grid-tile>
+
+            </mat-grid-list>
+        </form>
+
+        <br/>
+        <mat-card *ngIf="payRates$ | async">
+            <mat-card-title>Liste des payrates</mat-card-title>
+            <mat-card-content>
+                <mat-list role="list">
+                    <mat-list-item *ngFor="let payRate of payRates$ | async" role="listitem">
+                        <mat-list-item> {{payRate.id}} - {{payRate.caption}} - {{payRate.code}}</mat-list-item>
+                    </mat-list-item>
+                </mat-list>
+            </mat-card-content>
+        </mat-card>
+    </mat-tab>
+
+
+    <mat-tab label="Tab exercice 2">
+
+        <form [formGroup]="formGroup2">
+            <mat-grid-list cols="3" rowHeight="100px" style="width: 800px;">
+                <mat-grid-tile>
+                    <mat-radio-group formControlName="isActive" aria-label="Select an option">
+                        <mat-radio-button [value]="false">Désactivés</mat-radio-button>
+                        <mat-radio-button [value]="true">Activés</mat-radio-button>
+                    </mat-radio-group>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <mat-form-field>
+                        <mat-label>Pay max</mat-label>
+                        <input formControlName="payMax" type="number" matInput placeholder="Placeholder">
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <mat-form-field appearance="fill">
+                        <mat-label>Code</mat-label>
+                        <mat-select formControlName="code">
+                            <mat-option [value]="'PA'">PA</mat-option>
+                            <mat-option [value]="'PE'">PE</mat-option>
+                            <mat-option [value]="'PH'">PH</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-grid-tile>
+            </mat-grid-list>
+
+            <table *ngIf="payRates$ | async as payRates">
+                <tr>
+                    <th>Id</th>
+                    <th>Caption</th>
+                    <th>Code</th>
+                    <th>PayRate</th>
+                    <th>Enable</th>
+                </tr>
+                <tr *ngFor="let payRate of payRates">
+                    <td>{{payRate.id}}</td>
+                    <td>{{payRate.caption}}</td>
+                    <td>{{payRate.code}}</td>
+                    <td>{{payRate.payRate}}</td>
+                    <td>{{payRate.isEnabled}}</td>
+                </tr>
+            </table>
+
+        </form>
+    </mat-tab>
+
+    <mat-tab label="Tab exercice 2">
+
+        <form [formGroup]="formGroup3">
+            <mat-grid-list cols="2" rowHeight="100px" style="width: 600px;">
+                <mat-grid-tile>
+                    <mat-form-field>
+                        <mat-label>Pay max</mat-label>
+                        <input formControlName="payMax" type="number" matInput placeholder="Placeholder">
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <mat-form-field appearance="fill">
+                        <mat-label>Code</mat-label>
+                        <mat-select formControlName="code">
+                            <mat-option [value]="'AAA'">AAA</mat-option>
+                            <mat-option [value]="'BBB'">BBB</mat-option>
+                            <mat-option [value]="'CCC'">CCC</mat-option>
+                            <mat-option [value]="'DDD'">DDD</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-grid-tile>
+
+                <mat-grid-tile [colspan]="2">
+                    <mat-form-field appearance="fill" style="width: 400px">
+                        <mat-label>Conventions</mat-label>
+                        <mat-select formControlName="conventions" [compareWith]="compareConventions">
+                            <mat-option *ngFor="let convention of conventionsForAutoComplete$ | async" [value]="convention">{{ getCaption(convention) }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-grid-tile>
+
+                <mat-grid-tile>
+                    <mat-progress-bar *ngIf="showSpinner$ | async" mode="indeterminate"></mat-progress-bar>
+                </mat-grid-tile>
+
+                <mat-grid-tile *ngIf="conventionsForAutoComplete$ | async as conventionsForAutoComplete">
+                    <p>Il y a {{conventionsForAutoComplete?.length}} conventions disponibles</p>
+                </mat-grid-tile>
+
+            </mat-grid-list>
+
+        </form>
+    </mat-tab>
+</mat-tab-group>
+
